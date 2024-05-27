@@ -18,36 +18,42 @@ pipeline {
         }
         stage('2. Build with Maven') {
             steps {
-                sh "mvn clean package"
+                dir('addressbook-main') { // Change to the directory containing the pom.xml
+                    sh "mvn clean package"
+                }
             }
         }
         stage('3. SonarQube analysis') {
             steps {
-                script {
-                    def scannerHome = tool 'sonarqube-scanner'
-                    withSonarQubeEnv("maven-sonarqube") {
-                        sh """
-                        ${scannerHome}/bin/sonar-scanner -X \
-                        -Dsonar.projectKey=team34c \
-                        -Dsonar.host.url=http://52.3.250.67:9000 \
-                        -Dsonar.login=${SONAR_TOKEN}
-                        """
+                dir('addressbook-main') { // Change to the directory containing the source code
+                    script {
+                        def scannerHome = tool 'sonarqube-scanner'
+                        withSonarQubeEnv("maven-sonarqube") {
+                            sh """
+                            ${scannerHome}/bin/sonar-scanner -X \
+                            -Dsonar.projectKey=team34c \
+                            -Dsonar.host.url=http://52.3.250.67:9000 \
+                            -Dsonar.login=${SONAR_TOKEN}
+                            """
+                        }
                     }
                 }
             }
         }
         stage('4. Docker image build') {
             steps {
-                sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com"
-                sh "docker build -t team34c ."
-                sh "docker tag team34c:latest ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com/team34c:${params.ecr_tag}"
-                sh "docker push ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com/team34c:${params.ecr_tag}"
+                dir('addressbook-main') { // Change to the directory containing the Dockerfile
+                    sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com"
+                    sh "docker build -t team34c ."
+                    sh "docker tag team34c:latest ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com/team34c:${params.ecr_tag}"
+                    sh "docker push ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com/team34c:${params.ecr_tag}"
+                }
             }
         }
         stage('5. Deployment into Kubernetes Cluster') {
             steps {
                 kubeconfig(caCertificate: '', credentialsId: 'k8s-kubeconfig', serverUrl: '') {
-                    sh "kubectl apply -f manifest"
+                    sh "kubectl apply -f addressbook-main/manifest" // Adjust path if needed
                 }
             }
         }
