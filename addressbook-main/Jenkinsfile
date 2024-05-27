@@ -22,13 +22,17 @@ pipeline {
         stage('2. Verify Environment') {
             steps {
                 sh 'echo $JAVA_HOME'
+                sh 'echo $PATH'
                 sh 'java -version'
+                sh 'mvn -version'
             }
         }
         stage('3. Build with Maven') {
             steps {
                 dir('addressbook-main') { // Change to the directory containing the pom.xml
-                    sh "mvn clean package"
+                    withEnv(["JAVA_HOME=${env.JAVA_HOME}"]) {
+                        sh "mvn clean package"
+                    }
                 }
             }
         }
