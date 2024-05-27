@@ -9,8 +9,6 @@ pipeline {
         maven "maven-3.9.6"
     }
     environment {
-        JAVA_HOME = '/opt/jdk-17.0.3+7' // Explicitly set JAVA_HOME
-        PATH = "${JAVA_HOME}/bin:${env.PATH}" // Ensure JAVA_HOME is in the PATH
         SONAR_TOKEN = 'sqp_dbe8510694742cc58212ec85d2c99d2d03b491ac' // Replace with your actual SonarQube token
     }
     stages {
@@ -30,7 +28,7 @@ pipeline {
         stage('3. Build with Maven') {
             steps {
                 dir('addressbook-main') { // Change to the directory containing the pom.xml
-                    withEnv(["JAVA_HOME=${env.JAVA_HOME}"]) {
+                    withEnv(["JAVA_HOME=/opt/jdk-17.0.3+7", "PATH=/opt/jdk-17.0.3+7/bin:$PATH"]) {
                         sh "mvn clean package"
                     }
                 }
