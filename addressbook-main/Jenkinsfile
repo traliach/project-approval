@@ -11,7 +11,7 @@ pipeline {
     environment {
         JAVA_HOME = '/opt/jdk-17.0.3+7' // Ensure this is correct
         PATH = "${JAVA_HOME}/bin:/usr/bin:/bin:${env.PATH}" // Ensure the correct Java path is first
-        SONAR_TOKEN = 'sqp_dbe8510694742cc58212ec85d2c99d2d03b491ac' // Replace with your actual SonarQube token
+        SONAR_TOKEN = credentials('sonar-token') // Using Jenkins credentials binding
     }
     stages {
         stage('1. Verify Environment') {
@@ -45,6 +45,7 @@ pipeline {
                         withSonarQubeEnv('SonarQube') {
                             sh """
                             ${scannerHome}/bin/sonar-scanner -X \
+                            mvn clean verify sonar:sonar \
                             -Dsonar.projectKey=team34c \
                             -Dsonar.host.url=http://52.3.250.67:9000 \
                             -Dsonar.login=${SONAR_TOKEN}
