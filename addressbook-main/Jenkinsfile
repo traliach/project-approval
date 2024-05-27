@@ -7,6 +7,9 @@ pipeline {
     tools {
         maven "maven-3.9.6"
     }
+    environment {
+        SONAR_TOKEN = 'sqp_dbe8510694742cc58212ec85d2c99d2d03b491ac' // Replace with your actual SonarQube token
+    }
     stages {
         stage('1. Git Checkout') {
             steps {
@@ -19,9 +22,6 @@ pipeline {
             }
         }
         stage('3. SonarQube analysis') {
-            environment {
-                SONAR_TOKEN = credentials('sonar-token-abook')
-            }
             steps {
                 script {
                     def scannerHome = tool 'sonarqube-scanner'
