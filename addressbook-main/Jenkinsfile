@@ -71,7 +71,7 @@ pipeline {
         }
         stage('Deployment into Kubernetes Cluster') {
             steps {
-                kubeconfig(caCertificate: '', credentialsId: 'k8s-kubeconfig', serverUrl: '') {
+                withCredentials([file(credentialsId: 'k8s-kubeconfig', variable: 'KUBECONFIG')]) {
                     sh "kubectl apply -f addressbook-main/manifest" // Adjust path if needed
                 }
             }
