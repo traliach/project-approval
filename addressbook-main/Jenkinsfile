@@ -90,7 +90,7 @@ pipeline {
                 Let me know if the changes look okay.
                 Thanks,
                 Dominion System Technologies,
-                +1 (313) 413-1477''', cc: 'fusisoft@gmail.com', from: '', replyTo: '', subject: 'Application was Successfully Deployed!!', to: 'fusisoft@gmail.com'
+                +1 (313) 413-1477''', cc: 'irhuepearl@gmail.com', from: '', replyTo: '', subject: 'Application was Successfully Deployed!!', to: 'fusisoft@gmail.com'
             }
         }
     }
@@ -98,7 +98,7 @@ pipeline {
         failure {
             emailext(
                 body: 'Check console output at $BUILD_URL to view the results. \n\n ${CHANGES} \n\n -------------------------------------------------- \n${BUILD_LOG, maxLines=100, escapeHtml=false}', 
-                to: 'fusisoft@gmail.com', 
+                to: 'fusisoft@gmail.com', irhuepearl@gmail.com
                 subject: 'Build failed in Jenkins: $PROJECT_NAME - #$BUILD_NUMBER'
             )
         }
