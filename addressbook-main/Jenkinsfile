@@ -12,7 +12,7 @@ pipeline {
         AWS_CLI_PATH = '/usr/local/aws-cli/v2/current/bin' // Path to AWS CLI
     }
     stages {
-        stage('1. Verify Environment') {
+        stage('Verify Environment') {
             steps {
                 script {
                     if (!fileExists('/usr/bin/docker')) {
@@ -24,19 +24,19 @@ pipeline {
                 }
             }
         }
-        stage('2. Git Checkout') {
+        stage('Git Checkout') {
             steps {
                 git branch: 'main', credentialsId: 'GitHub-credential', url: 'https://github.com/traliach/project-approval.git'
             }
         }
-        stage('3. Build with Maven') {
+        stage('Build with Maven') {
             steps {
                 dir('addressbook-main') { // Change to the directory containing the pom.xml
                     sh "mvn clean package"
                 }
             }
         }
-        stage('4. SonarQube analysis') {
+        stage('SonarQube analysis') {
             steps {
                 dir('addressbook-main') { // Change to the directory containing the source code
                     script {
@@ -54,7 +54,7 @@ pipeline {
                 }
             }
         }
-        stage('5. Docker image build and push to ECR') {
+        stage('Docker image build and push to ECR') {
             steps {
                 dir('addressbook-main') { // Change to the directory containing the Dockerfile
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
@@ -68,14 +68,14 @@ pipeline {
                 }
             }
         }
-        stage('6. Deployment into Kubernetes Cluster') {
+        stage('Deployment into Kubernetes Cluster') {
             steps {
                 kubeconfig(caCertificate: '', credentialsId: 'k8s-kubeconfig', serverUrl: '') {
                     sh "kubectl apply -f addressbook-main/manifest" // Adjust path if needed
                 }
             }
         }
-        stage('7. Email Notification') {
+        stage('Email Notification') {
             steps {
                 mail bcc: 'traliach81@gmail.com', body: '''Build is Over. Check the application using the URL below. 
                 https://abook.shiawslab.com/addressbook-1.0
