@@ -60,14 +60,12 @@ pipeline {
         stage('Docker image build and push to ECR') {
             steps {
                 dir('addressbook-main') { // Change to the directory containing the Dockerfile
-                    //withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
-                        sh """
-                        aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com
-                        docker build -t team34c .
-                        docker tag team34c:latest ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com/team34c:${params.ecr_tag}
-                        docker push ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com/team34c:${params.ecr_tag}
-                        """
-                    }
+                    sh """
+                    ${AWS_CLI_PATH}/aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com
+                    docker build -t team34c .
+                    docker tag team34c:latest ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com/team34c:${params.ecr_tag}
+                    docker push ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com/team34c:${params.ecr_tag}
+                    """
                 }
             }
         }
