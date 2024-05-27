@@ -15,10 +15,13 @@ pipeline {
         stage('Verify Environment') {
             steps {
                 script {
-                    if (!fileExists('/usr/bin/docker')) {
+                    def dockerInstalled = sh(script: 'command -v docker', returnStatus: true) == 0
+                    def awsInstalled = sh(script: "command -v ${AWS_CLI_PATH}/aws", returnStatus: true) == 0
+
+                    if (!dockerInstalled) {
                         error "Docker is not installed. Please install Docker."
                     }
-                    if (!fileExists("${AWS_CLI_PATH}/aws")) {
+                    if (!awsInstalled) {
                         error "AWS CLI is not installed. Please install AWS CLI."
                     }
                 }
