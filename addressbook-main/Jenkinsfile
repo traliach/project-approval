@@ -83,7 +83,7 @@ pipeline {
         stage('Email Notification') {
             steps {
                 mail bcc: 'traliach81@gmail.com', body: '''Build is Over. Check the application using the URL below. 
-                https://abook.shiawslab.com/addressbook-1.0
+                https://abook.traliach.ninja/addressbook-1.0
                 Let me know if the changes look okay.
                 Thanks,
                 Dominion System Technologies,
