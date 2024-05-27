@@ -61,10 +61,10 @@ pipeline {
             steps {
                 dir('addressbook-main') { // Change to the directory containing the Dockerfile
                     sh """
-                    ${AWS_CLI_PATH}/aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com
-                    docker build -t team34c .
-                    docker tag team34c:latest ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com/team34c:${params.ecr_tag}
-                    docker push ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com/team34c:${params.ecr_tag}
+                    ${AWS_CLI_PATH}/aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com
+                    sudo docker build -t team34c .
+                    sudo docker tag team34c:latest ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com/team34c:${params.ecr_tag}
+                    sudo docker push ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com/team34c:${params.ecr_tag}
                     """
                 }
             }
