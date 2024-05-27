@@ -9,6 +9,7 @@ pipeline {
         maven "maven-3.9.6"
     }
     environment {
+        JAVA_HOME = '/opt/jdk-17.0.3+7' // Explicitly set JAVA_HOME
         SONAR_TOKEN = 'sqp_dbe8510694742cc58212ec85d2c99d2d03b491ac' // Replace with your actual SonarQube token
     }
     stages {
