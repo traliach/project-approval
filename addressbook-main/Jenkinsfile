@@ -21,13 +21,13 @@ pipeline {
                     def kubectlInstalled = sh(script: 'command -v kubectl', returnStatus: true) == 0
 
                     if (!dockerInstalled) {
-                        error "Docker is not installed. Please install Docker."
+                        error "Docker is not installed. Please install Docker to proceed."
                     }
                     if (!awsInstalled) {
-                        error "AWS CLI is not installed. Please install AWS CLI."
+                        error "AWS CLI is not installed. Please install AWS CLI to proceed."
                     }
                     if (!kubectlInstalled) {
-                        error "kubectl is not installed. Please install kubectl."
+                        error "kubectl is not installed. Please install kubectl to proceed."
                     }
                 }
             }
