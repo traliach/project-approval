@@ -9,6 +9,7 @@ pipeline {
     }
     environment {
         SONAR_TOKEN = 'sqp_dbe8510694742cc58212ec85d2c99d2d03b491ac' // Replace with your actual SonarQube token
+        AWS_CLI_PATH = '/usr/local/aws-cli/v2/current/bin' // Path to AWS CLI
     }
     stages {
         stage('1. Verify Environment') {
@@ -17,7 +18,7 @@ pipeline {
                     if (!fileExists('/usr/bin/docker')) {
                         error "Docker is not installed. Please install Docker."
                     }
-                    if (!fileExists('/usr/bin/aws')) {
+                    if (!fileExists("${AWS_CLI_PATH}/aws")) {
                         error "AWS CLI is not installed. Please install AWS CLI."
                     }
                 }
@@ -58,7 +59,7 @@ pipeline {
                 dir('addressbook-main') { // Change to the directory containing the Dockerfile
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                         sh """
-                        aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com
+                        ${AWS_CLI_PATH}/aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com
                         docker build -t team34c .
                         docker tag team34c:latest ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com/team34c:${params.ecr_tag}
                         docker push ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com/team34c:${params.ecr_tag}
