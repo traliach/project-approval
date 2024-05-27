@@ -8,8 +8,9 @@ pipeline {
         maven "maven-3.9.6"
     }
     environment {
-        SONAR_TOKEN = 'sqp_dbe8510694742cc58212ec85d2c99d2d03b491ac' // Replace with your actual SonarQube token
+        SONAR_TOKEN = credentials('sonar-token') // Use Jenkins credentials for SonarQube token
         AWS_CLI_PATH = '/usr/local/aws-cli/v2/current/bin' // Path to AWS CLI
+        EMAIL_TO = 'dorisakudo09@gmail.com'
     }
     stages {
         stage('Verify Environment') {
@@ -48,7 +49,7 @@ pipeline {
                 dir('addressbook-main') { // Change to the directory containing the source code
                     script {
                         def scannerHome = tool 'sonarqube-scanner'
-                        withSonarQubeEnv("maven-sonarqube") {
+                        withSonarQubeEnv("SonarQube") {
                             sh """
                             ${scannerHome}/bin/sonar-scanner -X \
                             -Dsonar.projectKey=team34c \
@@ -65,10 +66,10 @@ pipeline {
             steps {
                 dir('addressbook-main') { // Change to the directory containing the Dockerfile
                     sh """
-                    ${AWS_CLI_PATH}/aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com
-                    sudo docker build -t team34c .
-                    sudo docker tag team34c:latest ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com/team34c:${params.ecr_tag}
-                    sudo docker push ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com/team34c:${params.ecr_tag}
+                    ${AWS_CLI_PATH}/aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com
+                    docker build -t team34c .
+                    docker tag team34c:latest ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com/team34c:${params.ecr_tag}
+                    docker push ${params.aws_account}.dkr.ecr.us-east-1.amazonaws.com/team34c:${params.ecr_tag}
                     """
                 }
             }
@@ -85,27 +86,33 @@ pipeline {
                 mail bcc: 'traliach81@gmail.com', body: '''Build is Over. Check the application using the URL below. 
                 https://abook.traliach.ninja/addressbook-1.0
                 Let me know if the changes look okay.
-                Thanks,
+
                 Dominion System Technologies,
-                +1 (313) 413-1477''', cc: 'fusisoft@gmail.com', from: '', replyTo: '', subject: 'Application was Successfully Deployed!!', to: 'fusisoft@gmail.com'
+                +1 (313) 413-1477''', cc: 'fusisoft@gmail.com', from: '', replyTo: '', subject: 'Application was Successfully Deployed!!', to: "${EMAIL_TO}"
             }
         }
     }
     post {
         failure {
-            emailext body: 'Check console output at $BUILD_URL to view the results. \n\n ${CHANGES} \n\n -------------------------------------------------- \n${BUILD_LOG, maxLines=100, escapeHtml=false}', 
-                    to: "${EMAIL_TO}", 
-                    subject: 'Build failed in Jenkins: $PROJECT_NAME - #$BUILD_NUMBER'
+            emailext(
+                body: 'Check console output at $BUILD_URL to view the results. \n\n ${CHANGES} \n\n -------------------------------------------------- \n${BUILD_LOG, maxLines=100, escapeHtml=false}', 
+                to: "${EMAIL_TO}", 
+                subject: 'Build failed in Jenkins: $PROJECT_NAME - #$BUILD_NUMBER'
+            )
         }
         unstable {
-            emailext body: 'Check console output at $BUILD_URL to view the results. \n\n ${CHANGES} \n\n -------------------------------------------------- \n${BUILD_LOG, maxLines=100, escapeHtml=false}', 
-                    to: "${EMAIL_TO}", 
-                    subject: 'Unstable build in Jenkins: $PROJECT_NAME - #$BUILD_NUMBER'
+            emailext(
+                body: 'Check console output at $BUILD_URL to view the results. \n\n ${CHANGES} \n\n -------------------------------------------------- \n${BUILD_LOG, maxLines=100, escapeHtml=false}', 
+                to: "${EMAIL_TO}", 
+                subject: 'Unstable build in Jenkins: $PROJECT_NAME - #$BUILD_NUMBER'
+            )
         }
         changed {
-            emailext body: 'Check console output at $BUILD_URL to view the results.', 
-                    to: "${EMAIL_TO}", 
-                    subject: 'Jenkins build is back to normal: $PROJECT_NAME - #$BUILD_NUMBER'
+            emailext(
+                body: 'Check console output at $BUILD_URL to view the results.', 
+                to: "${EMAIL_TO}", 
+                subject: 'Jenkins build is back to normal: $PROJECT_NAME - #$BUILD_NUMBER'
+            )
         }
     }
 }
