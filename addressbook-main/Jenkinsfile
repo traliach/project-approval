@@ -8,7 +8,7 @@ pipeline {
         maven "maven-3.9.6"
     }
     environment {
-        SONAR_TOKEN = credentials('sonar-token') // Use Jenkins credentials for SonarQube token
+        SONAR_TOKEN = 'sqp_dbe8510694742cc58212ec85d2c99d2d03b491ac' // Replace with your actual SonarQube token
         AWS_CLI_PATH = '/usr/local/aws-cli/v2/current/bin' // Path to AWS CLI
     }
     stages {
@@ -48,7 +48,7 @@ pipeline {
                 dir('addressbook-main') { // Change to the directory containing the source code
                     script {
                         def scannerHome = tool 'sonarqube-scanner'
-                        withSonarQubeEnv("SonarQube") {
+                        withSonarQubeEnv("maven-sonarqube") {
                             sh """
                             ${scannerHome}/bin/sonar-scanner -X \
                             -Dsonar.projectKey=team34c \
@@ -90,7 +90,7 @@ pipeline {
                 Let me know if the changes look okay.
                 Thanks,
                 Dominion System Technologies,
-                +1 (313) 413-1477''', cc: 'fusisoft@gmail.com', from: '', replyTo: '', subject: 'Application was Successfully Deployed!!', to: "${EMAIL_TO}"
+                +1 (313) 413-1477''', cc: 'fusisoft@gmail.com', from: '', replyTo: '', subject: 'Application was Successfully Deployed!!', to: 'fusisoft@gmail.com'
             }
         }
     }
@@ -98,21 +98,21 @@ pipeline {
         failure {
             emailext(
                 body: 'Check console output at $BUILD_URL to view the results. \n\n ${CHANGES} \n\n -------------------------------------------------- \n${BUILD_LOG, maxLines=100, escapeHtml=false}', 
-                to: "${EMAIL_TO}", 
+                to: 'fusisoft@gmail.com', 
                 subject: 'Build failed in Jenkins: $PROJECT_NAME - #$BUILD_NUMBER'
             )
         }
         unstable {
             emailext(
                 body: 'Check console output at $BUILD_URL to view the results. \n\n ${CHANGES} \n\n -------------------------------------------------- \n${BUILD_LOG, maxLines=100, escapeHtml=false}', 
-                to: "${EMAIL_TO}", 
+                to: 'fusisoft@gmail.com', 
                 subject: 'Unstable build in Jenkins: $PROJECT_NAME - #$BUILD_NUMBER'
             )
         }
         changed {
             emailext(
                 body: 'Check console output at $BUILD_URL to view the results.', 
-                to: "${EMAIL_TO}", 
+                to: 'fusisoft@gmail.com', 
                 subject: 'Jenkins build is back to normal: $PROJECT_NAME - #$BUILD_NUMBER'
             )
         }
