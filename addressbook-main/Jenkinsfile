@@ -10,7 +10,7 @@ pipeline {
     }
     environment {
         JAVA_HOME = '/usr/lib/jvm/java-17-openjdk-amd64'
-        PATH = "${JAVA_HOME}/bin:${env.PATH}"
+        PATH = "${JAVA_HOME}/bin:/usr/bin:/bin:${env.PATH}"
         SONAR_TOKEN = 'sqp_dbe8510694742cc58212ec85d2c99d2d03b491ac' // Replace with your actual SonarQube token
     }
     stages {
@@ -25,13 +25,17 @@ pipeline {
         }
         stage('2. Git Checkout') {
             steps {
+                script {
+                    def gitPath = tool name: 'Default', type: 'GitTool'
+                    env.PATH = "${gitPath}/bin:${env.PATH}"
+                }
                 git branch: 'main', credentialsId: 'GitHub-credential', url: 'https://github.com/traliach/project-approval.git'
             }
         }
         stage('3. Build with Maven') {
             steps {
                 dir('addressbook-main') {
-                    withEnv(["JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64", "PATH=/usr/lib/jvm/java-17-openjdk-amd64/bin:${env.PATH}"]) {
+                    withEnv(["JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64", "PATH=/usr/lib/jvm/java-17-openjdk-amd64/bin:/usr/bin:/bin:${env.PATH}"]) {
                         sh 'mvn clean package'
                     }
                 }
