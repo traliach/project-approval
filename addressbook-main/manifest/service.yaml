@@ -1,38 +1,38 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: addressbook-service
-  namespace: directory
-spec:
-  selector:
-    app: addressbook
-  ports:
-    - protocol: TCP
-      port: 8080
-      targetPort: 8080
-
-#apiVersion: networking.k8s.io/v1
-# kind: Ingress
+# apiVersion: v1
+# kind: Service
 # metadata:
-#   name: webapp-ingress
-#   namespace: gateway
-#   annotations:
-#     alb.ingress.kubernetes.io/scheme: internet-facing
-#     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-west-2:322266404742:certificate/a1027753-3cdb-4841-af8b-4f1a3266d97f
-#     alb.ingress.kubernetes.io/subnets:
-#     alb.ingress.kubernetes.io/target-type: ip
-#     alb.ingress.kubernetes.io/load-balancer-name: webapp-server-ip
-#     alb.ingress.kubernetes.io/target-group-attributes: deregistration_delay.timeout_seconds=30
+#   name: addressbook-service
+#   namespace: directory
 # spec:
-#   ingressClassName: alb
-#   rules:
-#     - host: webapp.shiawslab.com
-#       http:
-#         paths:
-#           - path: /
-#             pathType: Exact
-#             backend:
-#               service:
-#                 name: webapp-service
-#                 port:
-#                   number: 8080
+#   selector:
+#     app: Team34C-Load-balancer
+#   ports:
+#     - protocol: TCP
+#       port: 8080
+#       targetPort: 8080
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webapp-ingress
+  namespace: gateway
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:975050054743:certificate/46fc6ea9-d821-4bcd-baf4-c850eed208f5
+    alb.ingress.kubernetes.io/subnets:
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/load-balancer-name: webapp-server-ip
+    alb.ingress.kubernetes.io/target-group-attributes: deregistration_delay.timeout_seconds=30
+spec:
+  ingressClassName: alb
+  rules:
+    - host: abook.traliach.ninja
+      http:
+        paths:
+          - path: /
+            pathType: Exact
+            backend:
+              service:
+                name: webapp-service
+                port:
+                  number: 8080
