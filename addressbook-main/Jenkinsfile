@@ -76,10 +76,7 @@ pipeline {
         stage('Deployment into Kubernetes Cluster') {
             steps {
                 withCredentials([file(credentialsId: 'k8s-kubeconfig', variable: 'KUBECONFIG')]) {
-                    // Debugging step to list manifest files
-                    sh 'ls -lR addressbook-main/manifest'
-                    // Apply all YAML files recursively
-                    sh 'find addressbook-main/manifest -name "*.yaml" -exec kubectl apply -f {} \\;'
+                    sh "kubectl apply -f addressbook-main/manifest" // Adjust path if needed
                 }
             }
         }
@@ -90,31 +87,25 @@ pipeline {
                 Let me know if the changes look okay.
                 Thanks,
                 Dominion System Technologies,
-                +1 (313) 413-1477''', cc: 'irhuepearl@gmail.com', from: '', replyTo: '', subject: 'Application was Successfully Deployed!!', to: 'fusisoft@gmail.com'
+                +1 (313) 413-1477''', cc: 'fusisoft@gmail.com', from: '', replyTo: '', subject: 'Application was Successfully Deployed!!', to: 'fusisoft@gmail.com'
             }
         }
     }
     post {
         failure {
-            emailext(
-                body: 'Check console output at $BUILD_URL to view the results. \n\n ${CHANGES} \n\n -------------------------------------------------- \n${BUILD_LOG, maxLines=100, escapeHtml=false}', 
-                to: 'fusisoft@gmail.com', 'irhuepearl@gmail.com'
-                subject: 'Build failed in Jenkins: $PROJECT_NAME - #$BUILD_NUMBER'
-            )
+            emailext body: 'Check console output at $BUILD_URL to view the results. \n\n ${CHANGES} \n\n -------------------------------------------------- \n${BUILD_LOG, maxLines=100, escapeHtml=false}', 
+                    to: "${EMAIL_TO}", 
+                    subject: 'Build failed in Jenkins: $PROJECT_NAME - #$BUILD_NUMBER'
         }
         unstable {
-            emailext(
-                body: 'Check console output at $BUILD_URL to view the results. \n\n ${CHANGES} \n\n -------------------------------------------------- \n${BUILD_LOG, maxLines=100, escapeHtml=false}', 
-                to: 'fusisoft@gmail.com', 
-                subject: 'Unstable build in Jenkins: $PROJECT_NAME - #$BUILD_NUMBER'
-            )
+            emailext body: 'Check console output at $BUILD_URL to view the results. \n\n ${CHANGES} \n\n -------------------------------------------------- \n${BUILD_LOG, maxLines=100, escapeHtml=false}', 
+                    to: "${EMAIL_TO}", 
+                    subject: 'Unstable build in Jenkins: $PROJECT_NAME - #$BUILD_NUMBER'
         }
         changed {
-            emailext(
-                body: 'Check console output at $BUILD_URL to view the results.', 
-                to: 'fusisoft@gmail.com', 
-                subject: 'Jenkins build is back to normal: $PROJECT_NAME - #$BUILD_NUMBER'
-            )
+            emailext body: 'Check console output at $BUILD_URL to view the results.', 
+                    to: "${EMAIL_TO}", 
+                    subject: 'Jenkins build is back to normal: $PROJECT_NAME - #$BUILD_NUMBER'
         }
     }
 }
