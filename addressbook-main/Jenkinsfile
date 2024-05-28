@@ -76,7 +76,10 @@ pipeline {
         stage('Deployment into Kubernetes Cluster') {
             steps {
                 withCredentials([file(credentialsId: 'k8s-kubeconfig', variable: 'KUBECONFIG')]) {
-                    sh "kubectl apply -f addressbook-main/manifest" // Adjust path if needed
+                    // Debugging step to list manifest files
+                    sh 'ls -lR addressbook-main/manifest'
+                    // Apply all YAML files recursively
+                    sh 'find addressbook-main/manifest -name "*.yaml" -exec kubectl apply -f {} \\;'
                 }
             }
         }
