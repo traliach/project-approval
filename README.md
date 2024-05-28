@@ -1,93 +1,65 @@
 # Project Approval Main 🎉
 
-## Project Structure
+## Project 1: Install and Configure Jenkins to deploy Cloud resources using Terraform 🚀
 
-project-approval-main
-│
-├── jenkins_terraform_node
-│ ├── main.tf
-│ ├── variables.tf
-│ ├── outputs.tf
-│ ├── jenkins_provision.tf
-│ ├── terraform_node.tf
-│ ├── terraform_install.tf
-│ ├── user_data.sh
-│ ├── terraform_install.sh
-│ └── terraform.tfvars
-│
-├── eks_terraform_deploy
-│ ├── main.tf
-│ ├── variables.tf
-│ ├── outputs.tf
-│ ├── test_deployment.yml
-│ └── terraform.tfvars
-│
-├── s3_gmail_integration
-│ ├── backend.tf
-│ ├── s3_bucket.tf
-│ ├── dynamodb_table.tf
-│ └── terraform.tfvars
-│
-├── maven_sonarqube_integration
-│ ├── main.tf
-│ ├── variables.tf
-│ ├── outputs.tf
-│ ├── maven_install.tf
-│ ├── sonarqube_install.tf
-│ ├── sonar_scanner_config.tf
-│ └── terraform.tfvars
-│
-├── iam_roles
-│ ├── main.tf
-│ ├── variables.tf
-│ └── terraform.tfvars
-│
-├── final_application_deployment
-│ └── jenkinsfile
-│
-└── README.md
+### Steps:
+1. **Set up an Ubuntu machine for Jenkins server 🖥️**
+   - Provision an Ubuntu EC2 instance using Terraform.
+   - **Link:** [Terraform EC2 Module](https://registry.terraform.io/modules/terraform-aws-modules/ec2-instance/aws/latest)
+2. **Install Jenkins on the server using Terraform 🔧**
+   - Use a Terraform provisioner to install Jenkins on the provisioned EC2 instance.
+   - **Link:** [Terraform Provisioners](https://www.terraform.io/docs/language/resources/provisioners/syntax.html)
+3. **Configure Jenkins to deploy cloud resources using Terraform ☁️**
+   - Set up Jenkins pipeline with Terraform scripts.
+   - **Link:** [Using Jenkins to run Terraform](https://www.jenkins.io/doc/tutorials/create-a-pipeline-with-terraform/)
+4. **Create a Terraform node and add it to the Jenkins server 🔗**
+   - Provision another Ubuntu EC2 instance using Terraform and configure it as a node in Jenkins.
+   - **Link:** [Managing Nodes in Jenkins](https://www.jenkins.io/doc/book/managing/nodes/)
+5. **Install Terraform on the Terraform node using Terraform 🛠️**
+   - Use a Terraform provisioner to install Terraform on the node.
+   - **Link:** [Terraform Provisioners](https://www.terraform.io/docs/language/resources/provisioners/syntax.html)
 
+## Project 2: Deploy EKS cluster and work on it 🌐
 
-## Instructions
+### Steps:
+1. **Write Terraform scripts to deploy an EKS cluster 📜**
+   - Create Terraform scripts to provision an EKS cluster.
+   - **Link:** [EKS Terraform Module](https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest)
+2. **Configure the EKS cluster with necessary IAM roles 🔒**
+   - Create IAM roles with required permissions.
+   - **Link:** [IAM Roles for EKS](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles.html)
+3. **Test the EKS deployment ✅**
+   - Validate the EKS cluster by deploying a sample application.
+   - **Link:** [Kubernetes Sample Deployment](https://kubernetes.io/docs/tutorials/stateless-application/hello-minikube/)
 
-### 1. Set up Jenkins and Terraform Nodes
-- **Step 1:** Navigate to `jenkins_terraform_node` and run `terraform init` and `terraform apply`.
-- **Step 2:** SSH into the Jenkins server and start Jenkins using the command `sudo systemctl start jenkins`.
+## Project 3: Configure S3 bucket and integrate Gmail 📧
 
-### 2. Deploy EKS Cluster
-- **Step 1:** Navigate to `eks_terraform_deploy` and run `terraform init` and `terraform apply`.
+### Steps:
+1. **Create Terraform scripts to configure an S3 bucket for state management 🗃️**
+   - Create and configure an S3 bucket for Terraform state management.
+   - **Link:** [Terraform S3 Backend](https://www.terraform.io/docs/backends/types/s3.html)
+2. **Integrate Gmail for notifications using Terraform ✉️**
+   - Use Terraform to configure Gmail SMTP settings in Jenkins.
+   - **Link:** [Jenkins Email Extension](https://plugins.jenkins.io/email-ext/)
 
-### 3. Configure S3 Bucket and DynamoDB Table for State Management
-- **Step 1:** Navigate to `s3_gmail_integration` and run `terraform init` and `terraform apply`.
+## Project 4: Integrate Maven and SonarQube 📦
 
-### 4. Integrate Maven and SonarQube
-- **Step 1:** Navigate to `maven_sonarqube_integration` and run `terraform init` and `terraform apply`.
+### Steps:
+1. **Install and configure Maven on the Jenkins server using Terraform 🔨**
+   - Install Maven and configure Jenkins to use it using Terraform.
+   - **Link:** [Maven Integration with Jenkins](https://www.jenkins.io/doc/book/pipeline/maven/)
+2. **Integrate SonarQube with Jenkins for code analysis using Terraform 🔍**
+   - Install SonarQube and configure Jenkins for code analysis using Terraform.
+   - **Link:** [SonarQube Jenkins Plugin](https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-jenkins/)
+3. **Configure SonarQube to work with the existing infrastructure using Terraform 🛠️**
+   - Update Terraform scripts to include SonarQube configurations.
+   - **Link:** [SonarQube on AWS](https://aws.amazon.com/quickstart/architecture/sonarqube/)
+4. **Launch the application on the created infrastructure 🚀**
+   - Deploy the final application using Jenkins pipeline.
+   - **Link:** [Jenkins Pipeline](https://www.jenkins.io/doc/book/pipeline/)
 
-### 5. Set Up IAM Roles
-- **Step 1:** Navigate to `iam_roles` and run `terraform init` and `terraform apply`.
-
-### 6. Configure Gmail in Jenkins
-- **Step 1:** Open Jenkins GUI and navigate to `Manage Jenkins` -> `Configure System`.
-- **Step 2:** Scroll to `Extended E-mail Notification` and configure your SMTP settings.
-  - **SMTP Server:** `smtp.example.com`
-  - **Default User E-mail Suffix:** `@example.com`
-  - **Sender E-mail Address:** `jenkins@example.com`
-  - **Reply-To Address:** `no-reply@example.com`
-  - **SMTP Authentication:** Enable and enter your credentials.
-  - **Use SSL:** Enable if your SMTP server requires it.
-  - **SMTP Port:** `465` or `587` depending on your server.
-
-### 7. Deploy Final Application
-- **Step 1:** Navigate to `final_application_deployment` and configure the Jenkins pipeline using the `jenkinsfile`.
-
-### Useful Links
-- [Terraform AWS Provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
-- [Jenkins Documentation](https://www.jenkins.io/doc/)
-- [Kubernetes Documentation](https://kubernetes.io/docs/)
-- [SonarQube Documentation](https://docs.sonarqube.org/latest/)
-
-### Notes
-- Ensure all Terraform scripts are correctly configured with your AWS credentials.
-- Follow best practices for IAM roles and permissions.
-- Verify all configurations and integrations in the Jenkins pipeline.
+## Final Steps
+1. **Build and deploy the application on the EKS cluster.**
+   - Ensure all configurations are applied and the application runs smoothly.
+   - **Link:** [Deploying Applications on EKS](https://docs.aws.amazon.com/eks/latest/userguide/deploying-applications.html)
 
